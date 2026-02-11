@@ -14,7 +14,7 @@ export const protectRoute = [
       if (!clerkId)
         return res
           .status(401)
-          .json({ message: "Unauthorized: No invalid token" });
+          .json({ message: "Unauthorized: invalid token" });
     const user= await User.findOne({clerkId});
     if(!user) return res.status(401).json({message:"Unauthorized: User not found"});
     

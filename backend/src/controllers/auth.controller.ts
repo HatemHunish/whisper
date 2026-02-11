@@ -15,7 +15,7 @@ export async function getCurrent(
     res.status(200).json({ user });
   } catch (error) {
     res.status(500);
-    next();
+    next(error);
   }
 }
 
@@ -47,6 +47,6 @@ export async function authCallback(
     res.json(user);
   } catch (error) {
     res.status(500);
-    next();
+    next(error);
   }
 }
