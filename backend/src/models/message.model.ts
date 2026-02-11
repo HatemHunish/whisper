@@ -17,4 +17,4 @@ const MessageSchema=new Schema<IMessage>({
 // index to optimize queries by chat and createdAt
 MessageSchema.index({ chat: 1, createdAt: 1}); // oldest messages first
 // 1 for ascending order, -1 for descending order
-export const MessageModel=mongoose.model<IMessage>('Message',MessageSchema);
+export const Message=mongoose.model<IMessage>('Message',MessageSchema);
