@@ -1,6 +1,7 @@
 import type { NextFunction, Response } from "express";
 import type { AuthenticatedRequest } from "../middleware/auth";
 import { Chat } from "../models/chat.model";
+import { Types } from "mongoose";
 
 export async function getChats(
   req: AuthenticatedRequest,
@@ -32,15 +33,29 @@ export async function getChats(
     next(error);
   }
 }
+type ChatParams = { participantId: string };
 
 export async function getOrCreateChat(
-  req: AuthenticatedRequest,
+  req: AuthenticatedRequest<ChatParams>,
   res: Response,
   next: NextFunction,
 ) {
-  const userId = req.userId;
-  const { participantId } = req.params;
   try {
+    const userId = req.userId;
+    const { participantId } = req.params;
+    if (!participantId) {
+      return res.status(400).json({ message: "participantId is required" });
+    }
+
+    if (!Types.ObjectId.isValid(participantId)) {
+      return res.status(400).json({ message: "Invalid participantId" });
+    }
+
+    if (participantId === userId) {
+      return res
+        .status(400)
+        .json({ message: "Cannot create chat with yourself" });
+    }
     let chat = await Chat.findOne({
       participants: { $all: [userId, participantId] },
     })
