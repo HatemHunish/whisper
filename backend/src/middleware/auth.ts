@@ -21,8 +21,8 @@ export const protectRoute = [
     req.userId= user._id.toString();
     next();
     } catch (error) {
-        console.error("Authentication error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500);
+        next(error);
     }
   },
 ];
