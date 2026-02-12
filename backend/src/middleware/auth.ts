@@ -3,7 +3,7 @@ import { getAuth } from "@clerk/express";
 import { requireAuth } from "@clerk/express";
 import { User } from "../models/user.model";
 
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest<P = any> extends Request<P> {
   userId?: string;
 }
 export const protectRoute = [
@@ -12,17 +12,18 @@ export const protectRoute = [
     try {
       const { userId: clerkId } = getAuth(req);
       if (!clerkId)
+        return res.status(401).json({ message: "Unauthorized: invalid token" });
+      const user = await User.findOne({ clerkId });
+      if (!user)
         return res
           .status(401)
-          .json({ message: "Unauthorized: invalid token" });
-    const user= await User.findOne({clerkId});
-    if(!user) return res.status(401).json({message:"Unauthorized: User not found"});
-    
-    req.userId= user._id.toString();
-    next();
+          .json({ message: "Unauthorized: User not found" });
+
+      req.userId = user._id.toString();
+      next();
     } catch (error) {
-        console.error("Authentication error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+      res.status(500);
+      next(error);
     }
   },
 ];
