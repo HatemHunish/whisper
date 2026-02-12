@@ -6,8 +6,8 @@ import { initializeSocketServer } from "./src/utils/socket";
 
 const httpServer = createServer(app);
 
-initializeSocketServer(httpServer);
 connectDatabase().then(() => {
+  initializeSocketServer(httpServer);
   httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

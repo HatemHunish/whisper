@@ -7,11 +7,8 @@ import { User } from "../models/user.model";
 const allowedOrigins = [
   "http://localhost:8081",
   "http://localhost:5173",
-  process.env.FRONTEND_URL!,
-];
-interface SocketWithUserId extends Socket {
-  userId?: string;
-}
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
 export const onlineUsers: Map<string, string> = new Map(); // userId to socketId mapping
 export function initializeSocketServer(httpServer: HTTPServer) {
   const io = new SocketServer(httpServer, {
@@ -39,30 +36,37 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       if (!user) {
         return next(new Error("Authentication error: User not found"));
       }
-      (socket as SocketWithUserId).userId = user._id.toString();
+      socket.data.userId = user._id.toString();
       next();
     } catch (error: any) {
-      next(new Error(error));
+      next(error);
     }
   });
 
   // this "connection" event is fired whenever a new client connects to the server
-  io.on("connection", (socket: SocketWithUserId) => {
-    const userId = socket.userId;
+  io.on("connection", (socket) => {
+    const userId = socket.data.userId;
     console.log(`User connected: ${userId}`);
 
     socket.emit("online-users", Array.from(onlineUsers.keys()));
 
     if (userId) {
       onlineUsers.set(userId, socket.id);
-      io.emit("user-online", userId);
+      io.emit("user-online", { userId });
     }
     // notify other user is online
     socket.broadcast.emit("user-online", { userId });
 
     socket.join(`user:${userId}`); // join a room specific to the user
 
-    socket.on("join-chat", (chatId: string) => {
+    socket.on("join-chat", async (chatId: string) => {
+      const chat = await Chat.findOne({
+        _id: chatId,
+        participants: userId,
+      });
+      if (!chat) {
+        return socket.emit("socket-error", "Chat not found or access denied");
+      }
       socket.join(`chat:${chatId}`);
     });
 
