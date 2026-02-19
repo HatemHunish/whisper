@@ -1,0 +1,45 @@
+services:
+  backend:
+    profiles: ["dev"]
+    image: oven/bun:1
+    container_name: whisper-backend-dev
+    working_dir: /app/backend
+    command: sh -c "bun install && bun run dev"
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      SERVE_FRONTEND_FROM_BACKEND: "false"
+    volumes:
+      - ./backend:/app/backend
+      - backend_node_modules:/app/backend/node_modules
+  frontend:
+    profiles: ["dev"]
+    image: oven/bun:1
+    container_name: whisper-frontend-dev
+    working_dir: /app/web
+    command: sh -c "bun install && bun run dev --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./web:/app/web
+      - frontend_node_modules:/app/web/node_modules
+  backend-served:
+    profiles: ["served"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whisper-backend-served
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      SERVE_FRONTEND_FROM_BACKEND: "true"
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
