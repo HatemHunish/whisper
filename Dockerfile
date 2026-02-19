@@ -1,7 +1,9 @@
 FROM oven/bun:latest
 
 WORKDIR /app
-
+# Create non-root user
+RUN addgroup --system --gid 1001 appgroup && \
+    adduser --system --uid 1001 --ingroup appgroup appuser
 # build web frontend
 WORKDIR /app/web
 COPY web/package.json web/bun.lock* ./

@@ -2,11 +2,6 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "jsx": "react-jsx",
-    "customConditions": [
-      "react-native",
-      "react-native-strict-api-UNSAFE-ALLOW-SUBPATHS"
-    ],
     "paths": {
       "@/*": [
         "./*"
@@ -18,7 +13,6 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "nativewind-env.d.ts",
-    "nativewind-strict-api.d.ts"
+    "nativewind-env.d.ts"
   ]
 }

@@ -56,5 +56,16 @@
         "activityBar.background": "#320A87",
         "titleBar.activeBackground": "#460EBD",
         "titleBar.activeForeground": "#FEFDFF"
+    },
+    "typescript.tsdk": "mobile/node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": false,
+    "typescript.suggest.enabled": true,
+    "typescript.suggest.autoImports": true,
+    "javascript.suggest.autoImports": true,
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true
     }
 }
