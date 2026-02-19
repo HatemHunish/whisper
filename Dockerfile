@@ -22,4 +22,5 @@ EXPOSE 3000
 # start non-sensetive defaults
 ENV PORT=3000
 ENV NODE_ENV=production
+USER appuser
 CMD ["bun", "index.ts"]

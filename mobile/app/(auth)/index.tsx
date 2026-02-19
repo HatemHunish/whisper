@@ -38,7 +38,7 @@ const AuthScreen = () => {
           />
           <View className="mt-6 items-center">
             <Text className="text-5xl font-bold text-foreground text-center font-sans">
-              Connext & Chat
+              Connect & Chat
             </Text>
             <Text className="text-3xl font-bold text-primary font-mono">
               Seamlessly

@@ -4,6 +4,10 @@ import { verifyToken } from "@clerk/express";
 import { Message } from "../models/message.model";
 import { Chat } from "../models/chat.model";
 import { User } from "../models/user.model";
+const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY;
+if (!CLERK_SECRET_KEY) {
+  throw new Error("CLERK_SECRET_KEY environment variable is required");
+}
 const allowedOrigins = [
   "http://localhost:8081",
   "http://localhost:5173",
@@ -25,7 +29,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
         return next(new Error("Authentication error: No token provided"));
       }
       const session = await verifyToken(token, {
-        secretKey: process.env.CLERK_SECRET_KEY!,
+        secretKey: CLERK_SECRET_KEY!,
       });
 
       const clerkId = session?.sub;
