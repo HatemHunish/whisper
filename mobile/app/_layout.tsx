@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import AuthSync from "@/components/auth-sync";
 import * as Sentry from "@sentry/react-native";
+import { installConsoleContext } from "@/lib/logger";
+
+// installConsoleContext();
 
 Sentry.init({
  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,

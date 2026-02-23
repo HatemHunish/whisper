@@ -1,4 +1,4 @@
-import { useAuthCallback } from "@/hooks/useAuth";
+import { useAuthCallback } from "@/hooks/use-auth";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { useEffect, useRef } from "react";
 
@@ -13,10 +13,10 @@ const AuthSync = () => {
 
       syncUser(undefined, {
         onSuccess(data) {
-          console.log("User synced successfully:", data.name);
+          console.log("[AuthSync]", "User synced successfully:", data.name);
         },
         onError(error) {
-          console.error("Failed to sync user:", error);
+          console.error("[AuthSync]", "Failed to sync user:", error);
         },
       });
     }

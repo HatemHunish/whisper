@@ -9,7 +9,8 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
-import useSocialAuth from "@/hooks/useSocialAuth";
+import useSocialAuth from "@/hooks/use-social-auth";
+
 const { width, height } = Dimensions.get("window");
 const AuthScreen = () => {
   const { handleSocialAuth, loadingStrategy } = useSocialAuth();

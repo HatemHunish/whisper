@@ -1,4 +1,5 @@
 import { useApi } from "@/lib/axios";
+import { User } from "@sentry/react-native";
 import { useMutation } from "@tanstack/react-query";
 import { Alert } from "react-native";
 export const useAuthCallback = () => {
@@ -6,7 +7,7 @@ export const useAuthCallback = () => {
   return useMutation({
     mutationFn: async () => {
       try {
-        const { data } = await api.apiWithAuth({
+        const { data } = await api.apiWithAuth<User>({
           method: "POST",
           url: "/auth/callback",
         });
