@@ -3,18 +3,51 @@ import { Stack } from "expo-router";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import AuthSync from "@/components/auth-sync";
+import * as Sentry from "@sentry/react-native";
+
+Sentry.init({
+  dsn: "https://20b5a5ad9db7e308b49c9f9d63594e60@o4510913193967616.ingest.de.sentry.io/4510913207795792",
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(),
+    Sentry.reactNativeTracingIntegration({
+      traceFetch: true,
+      traceXHR: true,
+      enableHTTPTimings: true,
+    })
+
+  ],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 const queryClient = new QueryClient();
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 if (!clerkPublishableKey) {
-  throw new Error("Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY environment variable");
+  throw new Error(
+    "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY environment variable",
+  );
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
+  Sentry.logger.info("This is an info log");
+
   return (
-    <ClerkProvider
-      tokenCache={tokenCache}
-      publishableKey={clerkPublishableKey}>
+    <ClerkProvider tokenCache={tokenCache} publishableKey={clerkPublishableKey}>
       <QueryClientProvider client={queryClient}>
+        <AuthSync />
+        <StatusBar style="light" />
         <Stack
           screenOptions={{
             headerShown: false,
@@ -26,4 +59,4 @@ export default function RootLayout() {
       </QueryClientProvider>
     </ClerkProvider>
   );
-}
+});
