@@ -17,7 +17,7 @@ import ChatItem from "@/components/chat-item";
 import EmptyUI from "@/components/empty-ui";
 const ChatsTab = () => {
   const router = useRouter();
-  const { data: chats, isLoading, error } = useChats();
+  const { data: chats, isLoading, error, refetch } = useChats();
 
   if (isLoading) {
     return (
@@ -28,11 +28,16 @@ const ChatsTab = () => {
   }
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-surface gap-2">
+      <View className="flex-1 items-center justify-center bg-surface gap-4">
         <Ionicons name="alert-circle-outline" size={32} color="red" />
         <Text className="text-red-500 ">
           Failed to load chats. Please try again later.
         </Text>
+        <Pressable
+          className="px-6 py-2 bg-primary rounded-full"
+          onPress={() => refetch()}>
+          <Text className="text-white font-medium">Retry</Text>
+        </Pressable>
       </View>
     );
   }
