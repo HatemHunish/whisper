@@ -48,8 +48,7 @@
           "project": "whisper",
           "organization": "personal-project-is"
         }
-      ],
-      "@sentry/react-native"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

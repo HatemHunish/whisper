@@ -1,11 +1,12 @@
-import {  Text, ScrollView, Button } from "react-native";
+import { Text, ScrollView, Button } from "react-native";
 import React from "react";
 import { useApi } from "@/lib/axios";
-import * as Sentry from "@sentry/react-native";
 const ChatsTab = () => {
-  const api = useApi();
-  api
-    .get("/users")
+  const { apiWithAuth } = useApi();
+  apiWithAuth({
+    method: "GET",
+    url: "/users",
+  })
     .then((res) => console.log(res.data))
     .catch((err) => console.log(err));
   return (

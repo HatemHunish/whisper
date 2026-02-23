@@ -6,7 +6,10 @@ export const useAuthCallback = () => {
   return useMutation({
     mutationFn: async () => {
       try {
-        const { data } = await api.post("/auth/callback");
+        const { data } = await api.apiWithAuth({
+          method: "POST",
+          url: "/auth/callback",
+        });
         return data;
       } catch (error) {
         Alert.alert(

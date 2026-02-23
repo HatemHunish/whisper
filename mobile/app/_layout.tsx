@@ -8,8 +8,7 @@ import AuthSync from "@/components/auth-sync";
 import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
-  dsn: "https://20b5a5ad9db7e308b49c9f9d63594e60@o4510913193967616.ingest.de.sentry.io/4510913207795792",
-
+ dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
@@ -41,8 +40,6 @@ if (!clerkPublishableKey) {
 }
 
 export default Sentry.wrap(function RootLayout() {
-  Sentry.logger.info("This is an info log");
-
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={clerkPublishableKey}>
       <QueryClientProvider client={queryClient}>
