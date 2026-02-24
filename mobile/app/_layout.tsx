@@ -11,7 +11,7 @@ import { installConsoleContext } from "@/lib/logger";
 // installConsoleContext();
 
 Sentry.init({
- dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
@@ -22,13 +22,13 @@ Sentry.init({
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(),
+  integrations: [
+    Sentry.mobileReplayIntegration(),
     Sentry.reactNativeTracingIntegration({
       traceFetch: true,
       traceXHR: true,
       enableHTTPTimings: true,
-    })
-
+    }),
   ],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
@@ -55,6 +55,14 @@ export default Sentry.wrap(function RootLayout() {
           }}>
           <Stack.Screen name="(auth)" options={{ animation: "fade" }} />
           <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
+          <Stack.Screen
+            name="new-chat"
+            options={{
+              animation: "slide_from_bottom",
+              presentation: "modal",
+              gestureEnabled: true,
+            }}
+          />
         </Stack>
       </QueryClientProvider>
     </ClerkProvider>
