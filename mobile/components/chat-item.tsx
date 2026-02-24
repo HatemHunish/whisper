@@ -9,7 +9,7 @@ type ChatItemProps = {
 };
 const ChatItem = ({ chat, onPress }: ChatItemProps) => {
   const particapant = chat.participant;
-
+  console.log("ChatItem render", particapant.avatar );
   const isOnline = true;
   const isTyping = false;
   const hasUnread = true;
@@ -19,7 +19,11 @@ const ChatItem = ({ chat, onPress }: ChatItemProps) => {
       className="flex-row items-center py-3 active:opacity-70">
       <View className="relative">
         <Image
-          source={{ uri: particapant.avatar }}
+          source={
+            particapant.avatar
+              ? { uri: particapant.avatar }
+              : require("../assets/images/logo.png")
+          }
           style={{ width: 56, height: 56, borderRadius: 999 }}
         />
         {isOnline && (

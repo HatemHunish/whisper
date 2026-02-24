@@ -55,7 +55,7 @@ const ChatsTab = () => {
   return (
     <View className="flex-1 bg-surface">
       <FlatList
-        data={MockChats}
+        data={chats}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <ChatItem chat={item} onPress={() => handleChatPress(item)} />
@@ -75,7 +75,7 @@ const ChatsTab = () => {
             iconColor="#6B6B70"
             iconSize={64}
             buttonLabel="New Chat"
-            onButtonPress={() => router.push("/(tabs)")}
+            onButtonPress={() => router.push("/new-chat")}
           />
         }
       />
@@ -91,7 +91,7 @@ function Header() {
     <View className="px-5 pt-2 pb-4">
       <View className="flex-row items-center justify-between">
         <Text className="text-2xl font-bold text-foreground">Chats</Text>
-        <Pressable className="size-10 bg-primary rounded-full items-center justify-center">
+        <Pressable className="size-10 bg-primary rounded-full items-center justify-center" onPress={() => router.push("/new-chat")}>
           <Ionicons name="create-outline" size={20} color="#0D0D0F" />
         </Pressable>
       </View>

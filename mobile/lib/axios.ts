@@ -11,29 +11,29 @@ const api = axios.create({
   },
 });
 // response intercepter registered once to log all API errors to Sentry
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API error:", error);
-    if (error.response) {
-      Sentry.logger.error(
-        Sentry.logger
-          .fmt`API request failed: ${error.config?.method?.toUpperCase()} ${error.config?.url} - Status: ${error.response.status}`,
-        {
-          status: error.response.status,
-          method: error.config?.method,
-          url: error.config?.url,
-        },
-      );
-    } else if (error.request) {
-      Sentry.logger.error("API request made but no response received", {
-        method: error.config?.method,
-        url: error.config?.url,
-      });
-    }
-    return Promise.reject(error);
-  },
-);
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     console.error("API error:", error.message);
+//     if (error.response) {
+//       Sentry.logger.error(
+//         Sentry.logger
+//           .fmt`API request failed: ${error.config?.method?.toUpperCase()} ${error.config?.url} - Status: ${error.response.status}`,
+//         {
+//           status: error.response.status,
+//           method: error.config?.method,
+//           url: error.config?.url,
+//         },
+//       );
+//     } else if (error.request) {
+//       Sentry.logger.error("API request made but no response received", {
+//         method: error.config?.method,
+//         url: error.config?.url,
+//       });
+//     }
+//     return Promise.reject(error);
+//   },
+// );
 export const useApi = () => {
   const { getToken } = useAuth();
 
