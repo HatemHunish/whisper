@@ -19,7 +19,7 @@ export async function getChats(
     const formatedChats = chats.map((chat) => {
       const otherParticipant = chat.participants.filter(
         (participant) => participant._id.toString() !== userId,
-      );
+      )[0];
       return {
         _id: chat._id,
         participant: otherParticipant,
