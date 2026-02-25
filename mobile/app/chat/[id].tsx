@@ -47,10 +47,12 @@ const ChatDetailScreen = () => {
     onlineUsers,
     typingUsers,
   } = useSocketStore();
-  const isParticipantOnline = onlineUsers.has(participantId);
-  const isParticipantTyping = typingUsers.get(participantId) === participantId;
+  const isParticipantOnline = participantId
+    ? onlineUsers.has(participantId)
+    : false;
+  const isParticipantTyping = typingUsers.get(chatId) === participantId;
   console.log("Online users:", onlineUsers);
-  console.log("Typing users:", typingUsers);
+  console.log("Typing users:", participantId, typingUsers, isParticipantTyping);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {

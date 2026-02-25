@@ -12,7 +12,8 @@ const ChatItem = ({ chat, onPress }: ChatItemProps) => {
   const particapant = chat.participant;
   const { onlineUsers, typingUsers, unreadChats } = useSocketStore();
   const isOnline = onlineUsers.has(particapant._id);
-  const isTyping = typingUsers.get(particapant._id) === particapant._id;
+  console.log(`Online users`, onlineUsers);
+  const isTyping = typingUsers.get(chat._id) === particapant._id;
   const hasUnread = unreadChats.has(chat._id);
   return (
     <Pressable
