@@ -26,6 +26,7 @@ export const useGetOrCreateChat = () => {
         method: "POST",
         url: `/chats/with/${participantId}`,
       });
+      console.log("Chat created or fetched:", data);
       return data;
     },
     onSuccess: () => {

@@ -22,10 +22,9 @@ export async function getMessages(
         .status(404)
         .json({ message: "Chat not found or access denied" });
 
-    const messages = await Message.find({ chatId })
+    const messages = await Message.find({ chat: chatId })
       .populate("sender", "name email avatar")
-      .sort({ createdAt: 1 });// ascending order
-
+      .sort({ createdAt: 1 }); // ascending order
     res.status(200).json(messages);
   } catch (error) {
     res.status(500);

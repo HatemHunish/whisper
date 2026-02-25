@@ -1,6 +1,6 @@
 import { useApi } from "@/lib/axios";
-import { User } from "@sentry/react-native";
-import { useMutation } from "@tanstack/react-query";
+import { User } from "@/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Alert } from "react-native";
 export const useAuthCallback = () => {
   const api = useApi();
@@ -19,6 +19,21 @@ export const useAuthCallback = () => {
         );
         throw error;
       }
+    },
+  });
+};
+
+export const useCurrentUser = () => {
+  const { apiWithAuth } = useApi();
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const { data } = await apiWithAuth<User>({
+        method: "GET",
+        url: "/auth/current",
+      });
+      console.log("Fetched current user:", data);
+      return data;
     },
   });
 };

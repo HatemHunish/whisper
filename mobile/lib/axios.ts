@@ -2,7 +2,11 @@ import axios from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 import { useCallback, useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
-const API_URL = "http://localhost:3000/api";
+import { Platform } from "react-native";
+const API_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000/api"
+    : "http://localhost:3000/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,29 +15,29 @@ const api = axios.create({
   },
 });
 // response intercepter registered once to log all API errors to Sentry
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     console.error("API error:", error.message);
-//     if (error.response) {
-//       Sentry.logger.error(
-//         Sentry.logger
-//           .fmt`API request failed: ${error.config?.method?.toUpperCase()} ${error.config?.url} - Status: ${error.response.status}`,
-//         {
-//           status: error.response.status,
-//           method: error.config?.method,
-//           url: error.config?.url,
-//         },
-//       );
-//     } else if (error.request) {
-//       Sentry.logger.error("API request made but no response received", {
-//         method: error.config?.method,
-//         url: error.config?.url,
-//       });
-//     }
-//     return Promise.reject(error);
-//   },
-// );
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API error:", error.message);
+    if (error.response) {
+      Sentry.logger.error(
+        Sentry.logger
+          .fmt`API request failed: ${error.config?.method?.toUpperCase()} ${error.config?.url} - Status: ${error.response.status}`,
+        {
+          status: error.response.status,
+          method: error.config?.method,
+          url: error.config?.url,
+        },
+      );
+    } else if (error.request) {
+      Sentry.logger.error("API request made but no response received", {
+        method: error.config?.method,
+        url: error.config?.url,
+      });
+    }
+    return Promise.reject(error);
+  },
+);
 export const useApi = () => {
   const { getToken } = useAuth();
 

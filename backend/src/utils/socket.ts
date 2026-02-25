@@ -114,7 +114,32 @@ export function initializeSocketServer(httpServer: HTTPServer) {
       },
     );
 
-    socket.on("typing", (data: { chatId: string; isTyping: boolean }) => {});
+    socket.on("typing", async (data: { chatId: string; isTyping: boolean }) => {
+      const typingPayload = {
+        userId,
+        chatId: data.chatId,
+        isTyping: data.isTyping,
+      };
+      // emit to chat room (for users currently in the chat)
+      socket.to(`chat:${data.chatId}`).emit("typing", typingPayload);
+
+      try {
+        const chat = await Chat.findById(data.chatId);
+        if (chat) { 
+          const otherParticipantId = chat.participants.find(
+            (p) => p.toString() !== userId,
+          );
+          if (otherParticipantId) {
+            // emit to other user (for users not currently in the chat but want to show typing indicator in chat list)
+            socket
+              .to(`user:${otherParticipantId}`)
+              .emit("typing", typingPayload);
+          }
+        }
+      } catch (error) {
+        // silently fail if chat not found or any error occurs, since typing indicator is just a nice-to-have feature
+      }
+    });
 
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${userId}`);
