@@ -32,7 +32,6 @@ export const useCurrentUser = () => {
         method: "GET",
         url: "/auth/current",
       });
-      console.log("Fetched current user:", data);
       return data;
     },
   });

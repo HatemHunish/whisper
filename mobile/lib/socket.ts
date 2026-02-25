@@ -4,10 +4,10 @@ import { QueryClient } from "@tanstack/react-query";
 import { Chat, Message, MessageSender } from "@/types";
 import * as Sentry from "@sentry/react-native";
 import { Platform } from "react-native";
-const SOCKET_URL =
-  process.env.EXPO_PUBLIC_SOCKET_URL || Platform.OS === "android"
-    ? "http://10.0.2.2:3000"
-    : "http://localhost:3000";
+const SOCKET_URL ='https://whisper-kcnm.onrender.com'
+//   process.env.EXPO_PUBLIC_SOCKET_URL || Platform.OS === "android"
+//     ? "http://10.0.2.2:3000"
+//     : "http://localhost:3000";
 interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
@@ -140,7 +140,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         chatId: string;
         isTyping: boolean;
       }) => {
-        console.log(`User ${userId} is ${isTyping ? "typing" : "not typing"} in chat ${chatId}`);
         set((state) => {
           const typingUsers = new Map(state.typingUsers);
           if (isTyping) typingUsers.set(chatId, userId);

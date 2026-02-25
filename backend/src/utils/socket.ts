@@ -52,7 +52,7 @@ export function initializeSocketServer(httpServer: HTTPServer) {
     const userId = socket.data.userId;
     console.log(`User connected: ${userId}`);
 
-    socket.emit("online-users", Array.from(onlineUsers.keys()));
+    socket.emit("online-users",{ userIds: Array.from(onlineUsers.keys()) }); // send the list of currently online users to the newly connected client
 
     if (userId) {
       onlineUsers.set(userId, socket.id);
