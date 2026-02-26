@@ -35,3 +35,20 @@ export const useGetOrCreateChat = () => {
     },
   });
 };
+
+export const useDeleteChat = () => {
+  const { apiWithAuth } = useApi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (chatId: string) => {
+      await apiWithAuth({
+        method: "DELETE",
+        url: `/chats/${chatId}`,
+      });
+    },
+    onSuccess: () => {
+      // Invalidate the chats query to refetch the list of chats after deletion
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
+};

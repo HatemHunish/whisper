@@ -1,18 +1,15 @@
 import {
   Text,
-  ScrollView,
-  Button,
   View,
   ActivityIndicator,
   FlatList,
   Pressable,
 } from "react-native";
 import React from "react";
-import { useApi } from "@/lib/axios";
 import { useRouter } from "expo-router";
 import { useChats } from "@/hooks/use-chat";
 import { Ionicons } from "@expo/vector-icons";
-import { Chat, MockChats } from "@/types";
+import { Chat } from "@/types";
 import ChatItem from "@/components/chat-item";
 import EmptyUI from "@/components/empty-ui";
 const ChatsTab = () => {
@@ -56,6 +53,8 @@ const ChatsTab = () => {
     <View className="flex-1 bg-surface">
       <FlatList
         data={chats}
+        refreshing={isLoading}
+        onRefresh={refetch}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <ChatItem chat={item} onPress={() => handleChatPress(item)} />

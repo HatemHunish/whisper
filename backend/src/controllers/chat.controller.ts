@@ -83,3 +83,36 @@ export async function getOrCreateChat(
     next(error);
   }
 }
+
+export async function deleteChat(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    console.log("Delete chat request received with params:", req.params);
+    const userId = req.userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const { chatId } = req.params;
+    if (!chatId) {
+      return res.status(400).json({ message: "chatId is required" });
+    }
+    if (!Types.ObjectId.isValid(chatId)) {
+      return res.status(400).json({ message: "Invalid chatId" });
+    }
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    if (!chat.participants.includes(userId as any)) {
+      return res
+        .status(403)
+        .json({ message: "Not a participant of this chat" });
+    }
+    await Chat.findByIdAndDelete(chatId);
+    res.status(200).json({ message: "Chat deleted successfully" });
+  } catch (error) {
+    res.status(500);
+    next(error);
+  }
+}

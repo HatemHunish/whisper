@@ -1,9 +1,11 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Alert } from "react-native";
 import React from "react";
 import { Chat } from "@/types";
 import { Image } from "expo-image";
 import { formatDistanceToNow } from "date-fns";
 import { useSocketStore } from "@/lib/socket";
+import { useDeleteChat } from "@/hooks/use-chat";
+import Ionicons from "@expo/vector-icons/build/Ionicons";
 type ChatItemProps = {
   chat: Chat;
   onPress: () => void;
@@ -11,13 +13,30 @@ type ChatItemProps = {
 const ChatItem = ({ chat, onPress }: ChatItemProps) => {
   const particapant = chat.participant;
   const { onlineUsers, typingUsers, unreadChats } = useSocketStore();
+  const { mutate: deleteChat } = useDeleteChat();
   const isOnline = onlineUsers.has(particapant._id);
   console.log(`Online users`, onlineUsers);
   const isTyping = typingUsers.get(chat._id) === particapant._id;
   const hasUnread = unreadChats.has(chat._id);
+
+  const handleDeletePress = () => {
+    Alert.alert(
+      "Delete Chat",
+      `Are you sure you want to delete the chat with ${particapant.name}? This action cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteChat(chat._id),
+        },
+      ],
+    );
+  };
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={handleDeletePress}
       className="flex-row items-center py-3 active:opacity-70">
       <View className="relative">
         <Image

@@ -59,23 +59,23 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       set((state) => ({
         onlineUsers: new Set([...state.onlineUsers, userId]),
       }));
-      socket.on("user-offline", ({ userId }: { userId: string }) => {
-        console.log("User offline:", userId);
-        set((state) => {
-          const onlineUsers = new Set(state.onlineUsers);
-          onlineUsers.delete(userId);
-          return { onlineUsers };
-        });
-      });
-      socket.on("socket-error", (error: { message: string }) => {
-        console.error("Socket error:", error.message);
-        Sentry.logger.error("Socket error: " + error.message, {
-          message: error.message,
-        });
-      });
-      set({ socket, queryClient });
     });
-    socket.on("new-message", (message: Message) => {
+    socket.on("user-offline", ({ userId }: { userId: string }) => {
+      console.log("User offline:", userId);
+      set((state) => {
+        const onlineUsers = new Set(state.onlineUsers);
+        onlineUsers.delete(userId);
+        return { onlineUsers };
+      });
+    });
+    socket.on("socket-error", (error: { message: string }) => {
+      console.error("Socket error:", error.message);
+      Sentry.logger.error("Socket error: " + error.message, {
+        message: error.message,
+      });
+    });
+    set({ socket, queryClient });
+    socket.on("new-message", async (message: Message) => {
       const senderId = (message.sender as MessageSender)._id;
       const { currentChatId } = get();
 
@@ -94,9 +94,13 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         },
       );
       // update last message in chat list
+      let didUpdateExistingChat = false;
       queryClient.setQueryData<Chat[]>(["chats"], (oldChats) => {
-        return oldChats?.map((chat) => {
+        if (!oldChats || oldChats.length === 0) return oldChats;
+
+        const nextChats = oldChats.map((chat) => {
           if (chat._id === message.chat) {
+            didUpdateExistingChat = true;
             return {
               ...chat,
               lastMessage: {
@@ -110,7 +114,23 @@ export const useSocketStore = create<SocketState>((set, get) => ({
           }
           return chat;
         });
+
+        // Keep chats ordered by newest activity for live updates.
+        return [...nextChats].sort((a, b) => {
+          const aTime = a.lastMessageAt
+            ? new Date(a.lastMessageAt).getTime()
+            : new Date(a.createdAt).getTime();
+          const bTime = b.lastMessageAt
+            ? new Date(b.lastMessageAt).getTime()
+            : new Date(b.createdAt).getTime();
+          return bTime - aTime;
+        });
       });
+      // If this message belongs to a chat not present in cache yet,
+      // refetch chats so the recipient sees it without a reload.
+      if (!didUpdateExistingChat) {
+       await queryClient.invalidateQueries({ queryKey: ["chats"] });
+      }
       // mark as unread if currenly viewing this chat and message is from other user
       if (currentChatId !== message.chat) {
         const chats = queryClient.getQueryData<Chat[]>(["chats"]);
